@@ -55,10 +55,9 @@
         "operationId" : "searchProduct",
         "parameters" : [ {
           "name" : "ref",
-          "in" : "query",
+          "in" : "path",
           "description" : "Référence du produit",
           "required" : true,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string"
@@ -88,11 +87,10 @@
         "description" : "Liste tous les utilisateurs d'un client",
         "operationId" : "searchUsers",
         "parameters" : [ {
-          "name" : "client_id",
-          "in" : "query",
+          "name" : "client",
+          "in" : "path",
           "description" : "ID du client",
           "required" : true,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string"
@@ -154,7 +152,6 @@
           "in" : "path",
           "description" : "ID de l'utilisateur",
           "required" : true,
-          "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string"
@@ -176,6 +173,16 @@
         "summary" : "Création d'un utilisateur",
         "description" : "Création d'un utilisateur",
         "operationId" : "addUser",
+        "parameters" : [ {
+          "name" : "client",
+          "in" : "path",
+          "description" : "ID du client",
+          "required" : true,
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "description" : "Utilisateur à ajouter",
           "content" : {
