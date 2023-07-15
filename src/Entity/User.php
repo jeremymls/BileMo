@@ -41,6 +41,7 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="users")
+     * @Groups({"createUser"})
      */
     private $client;
 
