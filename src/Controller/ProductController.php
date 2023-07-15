@@ -24,7 +24,7 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/api/product/{id}", name="product")
+     * @Route("/api/product/{ref}", name="product")
      */
     public function getDetailProduct(Product $product, SerializerInterface $serializer): JsonResponse
     {

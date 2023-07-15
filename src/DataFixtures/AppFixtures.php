@@ -2,6 +2,8 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Cart;
+use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -17,7 +19,6 @@ class AppFixtures extends Fixture
             $product = new Product();
             $product->setRef('ref'.$i);
             $product->setName('product_'.$i);
-            $product->setStock(random_int(0, 1000));
             $manager->persist($product);
             $products[] = $product;
         }
@@ -32,18 +33,29 @@ class AppFixtures extends Fixture
             $clients[] = $client;
         }
 
-        // Création de 100 users
+        // Création de 100 utilisateurs
         for ($i = 0; $i < 100; ++$i) {
             $user = new User();
             $user->setFirstName('user_first_name_'.$i);
             $user->setLastName('user_last_name_'.$i);
+            // Création de 0 à 10 commandes par utilisateur
             for ($j = 0; $j < random_int(0, 10); ++$j) {
-                $user->addProduct($products[random_int(0, 99)]);
+                $order = new Order();
+                $order->setUser($user);
+                // Création de 1 à 10 produits par commande
+                for ($k = 0; $k < random_int(1, 10); ++$k) {
+                    $cart = new Cart();
+                    $cart->setProduct($products[random_int(0, 99)]);
+                    $cart->setQuantity(random_int(1, 10));
+                    $order->addCart($cart);
+                    $manager->persist($cart);
+                }
+                $manager->persist($order);
             }
             $user->setClient($clients[random_int(0, 9)]);
             $manager->persist($user);
         }
 
-            $manager->flush();
-        }
+        $manager->flush();
+    }
 }

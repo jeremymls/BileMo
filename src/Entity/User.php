@@ -34,26 +34,26 @@ class User
     private $last_name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="users")
-     * @Groups({"getUser"})
-     */
-    private $products;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="users")
      * @Groups({"createUser"})
      */
     private $client;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="client")
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="client", cascade={"remove"})
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Order::class, mappedBy="user", orphanRemoval=true)
+     * @Groups({"getUsers"})
+     */
+    private $orders;
+
     public function __construct()
     {
-        $this->products = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,30 +81,6 @@ class User
     public function setLastName(string $last_name): self
     {
         $this->last_name = $last_name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        $this->products->removeElement($product);
 
         return $this;
     }
@@ -145,6 +121,36 @@ class User
             // set the owning side to null (unless already changed)
             if ($user->getClient() === $this) {
                 $user->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
             }
         }
 

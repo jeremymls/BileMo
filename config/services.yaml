@@ -20,5 +20,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Purger\CustomPurgerFactory:
+        tags:
+            - { name: 'doctrine.fixtures.purger_factory', alias: 'my_purger' }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

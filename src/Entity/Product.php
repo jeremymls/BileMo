@@ -22,31 +22,15 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getProducts", "getUser"})
+     * @Groups({"getProducts", "getUser", "getUsers"})
      */
     private $ref;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getProducts", "getUser"})
+     * @Groups({"getProducts", "getUser", "getUsers"})
      */
     private $name;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"getProducts"})
-     */
-    private $stock;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="products")
-     */
-    private $users;
-
-    public function __construct()
-    {
-        $this->users = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -73,45 +57,6 @@ class Product
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStock(): ?int
-    {
-        return $this->stock;
-    }
-
-    public function setStock(int $stock): self
-    {
-        $this->stock = $stock;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->addProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeProduct($this);
-        }
 
         return $this;
     }
