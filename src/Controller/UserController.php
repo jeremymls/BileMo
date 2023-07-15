@@ -21,4 +21,14 @@ class UserController extends AbstractController
 
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * @Route("/api/user/{id}", name="user")
+     */
+    public function getDetailUser(User $user, SerializerInterface $serializer): JsonResponse
+    {
+        $jsonUser = $serializer->serialize($user, 'json', ['groups' => ['getUsers','getUser']]);
+
+        return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
+    }
 }
