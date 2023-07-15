@@ -35,6 +35,7 @@ class User
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="users")
+     * @Groups({"getUser"})
      */
     private $products;
 
