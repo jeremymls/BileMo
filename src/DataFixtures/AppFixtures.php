@@ -26,8 +26,8 @@ class AppFixtures extends Fixture
         $clients = [];
         for ($i = 0; $i < 10; ++$i) {
             $client = new User();
-            $client->setFirstName('firstname_'.$i);
-            $client->setLastName('lastname_'.$i);
+            $client->setFirstName('client_first_name_'.$i);
+            $client->setLastName('client_last_name_'.$i);
             $manager->persist($client);
             $clients[] = $client;
         }
@@ -35,12 +35,12 @@ class AppFixtures extends Fixture
         // Création de 100 users
         for ($i = 0; $i < 100; ++$i) {
             $user = new User();
-            $user->setFirstName('firstname_'.$i);
-            $user->setLastName('lastname_'.$i);
+            $user->setFirstName('user_first_name_'.$i);
+            $user->setLastName('user_last_name_'.$i);
             for ($j = 0; $j < random_int(0, 10); ++$j) {
                 $user->addProduct($products[random_int(0, 99)]);
             }
-            $user->setParent($clients[random_int(0, 9)]);
+            $user->setClient($clients[random_int(0, 9)]);
             $manager->persist($user);
         }
 

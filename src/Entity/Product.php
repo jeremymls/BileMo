@@ -17,7 +17,6 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"getProducts"})
      */
     private $id;
 
@@ -40,8 +39,7 @@ class Product
     private $stock;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="product")
-     * @Groups({"getProducts"})
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="products")
      */
     private $users;
 

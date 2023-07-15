@@ -17,41 +17,40 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"getProducts"})
+     * @Groups({"getUsers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getProducts"})
+     * @Groups({"getUsers"})
      */
     private $first_name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getProducts"})
+     * @Groups({"getUsers"})
      */
     private $last_name;
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="users")
      */
-    private $product;
+    private $products;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="users")
-     * @Groups({"getProducts"})
      */
-    private $parent;
+    private $client;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="parent")
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="client")
      */
     private $users;
 
     public function __construct()
     {
-        $this->product = new ArrayCollection();
+        $this->products = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -87,15 +86,15 @@ class User
     /**
      * @return Collection<int, Product>
      */
-    public function getProduct(): Collection
+    public function getProducts(): Collection
     {
-        return $this->product;
+        return $this->products;
     }
 
     public function addProduct(Product $product): self
     {
-        if (!$this->product->contains($product)) {
-            $this->product[] = $product;
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
         }
 
         return $this;
@@ -103,19 +102,19 @@ class User
 
     public function removeProduct(Product $product): self
     {
-        $this->product->removeElement($product);
+        $this->products->removeElement($product);
 
         return $this;
     }
 
-    public function getParent(): ?self
+    public function getClient(): ?self
     {
-        return $this->parent;
+        return $this->client;
     }
 
-    public function setParent(?self $parent): self
+    public function setClient(?self $client): self
     {
-        $this->parent = $parent;
+        $this->client = $client;
 
         return $this;
     }
@@ -132,7 +131,7 @@ class User
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
-            $user->setParent($this);
+            $user->setClient($this);
         }
 
         return $this;
@@ -142,8 +141,8 @@ class User
     {
         if ($this->users->removeElement($user)) {
             // set the owning side to null (unless already changed)
-            if ($user->getParent() === $this) {
-                $user->setParent(null);
+            if ($user->getClient() === $this) {
+                $user->setClient(null);
             }
         }
 
