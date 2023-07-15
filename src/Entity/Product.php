@@ -6,6 +6,7 @@ use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -16,26 +17,31 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getProducts"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getProducts"})
      */
     private $ref;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getProducts"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"getProducts"})
      */
     private $stock;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="product")
+     * @Groups({"getProducts"})
      */
     private $users;
 
