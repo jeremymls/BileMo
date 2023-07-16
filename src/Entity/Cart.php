@@ -21,13 +21,13 @@ class Cart
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"getUsers"})
+     * @Groups({"getUsers", "getProduct"})
      */
     private $product;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"getUsers"})
+     * @Groups({"getUsers", "getProduct"})
      */
     private $quantity;
 

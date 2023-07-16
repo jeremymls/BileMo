@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,9 +27,17 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/product/{ref}", name="product")
      */
-    public function getDetailProduct(Product $product, SerializerInterface $serializer): JsonResponse
+    public function getDetailProduct(Product $product, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
     {
-        $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getProducts']);
+        $qb = $em->createQueryBuilder();
+        $qb->select('p.ref', 'p.name', 'SUM(c.quantity) as total')
+            ->from('App\Entity\Cart', 'c')
+            ->leftJoin('c.product', 'p')
+            ->where('p.ref = :ref')
+            ->groupBy('p.id')
+            ->setParameter('ref', $product->getRef());
+        $product = $qb->getQuery()->getResult();
+        $jsonProduct = $serializer->serialize($product, 'json', ['groups' => ['getProducts', 'getProduct']]);
 
         return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
     }
