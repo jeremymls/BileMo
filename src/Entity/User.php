@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -24,12 +25,14 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"getUsers"})
+     * @Assert\NotBlank(message="Le prénom est obligatoire")
      */
     private $first_name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"getUsers"})
+     * @Assert\NotBlank(message="Le nom est obligatoire")
      */
     private $last_name;
 
