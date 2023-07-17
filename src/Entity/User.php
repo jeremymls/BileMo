@@ -58,7 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Order::class, mappedBy="user", orphanRemoval=true)
-     * @Groups({"getUsers"})
+     * @Groups({"getUser"})
      */
     private $orders;
 

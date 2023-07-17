@@ -15,13 +15,16 @@ class ExceptionSubscriber implements EventSubscriberInterface
         if ($exception instanceof HttpException) {
             $data['status'] = $exception->getStatusCode();
             $params = $event->getRequest()->attributes->get('_route_params');
-
-            if (array_key_exists('ref', $params)) {
-                $data['message'] = "La référence " . $params['ref'] . " n'existe pas.";
-            } elseif (array_key_exists('client', $params)) {
-                $data['message'] = "Le client #" . $params['client'] . " n'existe pas.";
-            } elseif (array_key_exists('id', $params)) {
-                $data['message'] = "L'utilisateur #" . $params['id'] . " n'existe pas.";
+            if ($data['status'] == 404) {
+                if (array_key_exists('ref', $params)) {
+                    $data['message'] = "La référence " . $params['ref'] . " n'existe pas.";
+                } elseif (array_key_exists('client', $params)) {
+                    $data['message'] = "Le client #" . $params['client'] . " n'existe pas.";
+                } elseif (array_key_exists('id', $params)) {
+                    $data['message'] = "L'utilisateur #" . $params['id'] . " n'existe pas.";
+                } else {
+                    $data['message'] = $exception->getMessage();
+                }
             } else {
                 $data['message'] = $exception->getMessage();
             }
