@@ -8,9 +8,17 @@ use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private $userPasswordHasher;
+
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    {
+        $this->userPasswordHasher = $userPasswordHasher;
+    }
+
     public function load(ObjectManager $manager): void
     {
         // Création de 100 produits
@@ -27,8 +35,9 @@ class AppFixtures extends Fixture
         $clients = [];
         for ($i = 0; $i < 10; ++$i) {
             $client = new User();
-            $client->setFirstName('client_first_name_'.$i);
-            $client->setLastName('client_last_name_'.$i);
+            $client->setEmail('client_' . $i . '@bile.mo');
+            $client->setRoles(['ROLE_CLIENT']);
+            $client->setPassword($this->userPasswordHasher->hashPassword($client, 'password'));
             $manager->persist($client);
             $clients[] = $client;
         }
@@ -36,8 +45,9 @@ class AppFixtures extends Fixture
         // Création de 100 utilisateurs
         for ($i = 0; $i < 100; ++$i) {
             $user = new User();
-            $user->setFirstName('user_first_name_'.$i);
-            $user->setLastName('user_last_name_'.$i);
+            $user->setEmail('user_' . $i . '@bile.mo');
+            $user->setRoles(['ROLE_USER']);
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, 'password'));
             // Création de 0 à 10 commandes par utilisateur
             for ($j = 0; $j < random_int(0, 10); ++$j) {
                 $order = new Order();
