@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -43,9 +44,24 @@ class UserController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validator
     ): JsonResponse {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+
+        $errors = $validator->validate($user);
+
+        if (count($errors) > 0) {
+            $data = ["status" => 400];
+            $data["message"] = (count($errors) > 1) ? "Requête invalide" : $errors[0]->getMessage();
+            if (count($errors) > 1) {
+                foreach ($errors as $error) {
+                    $data["errors"][] = $error->getMessage();
+                }
+            }
+            return new JsonResponse($serializer->serialize($data, 'json'), Response::HTTP_BAD_REQUEST, [], true);
+        }
+
         $user->setClient($client);
         $em->persist($user);
         $em->flush();
