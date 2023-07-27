@@ -15,7 +15,12 @@ class ExceptionSubscriber implements EventSubscriberInterface
         if ($exception instanceof HttpException) {
             $data['status'] = $exception->getStatusCode();
             $params = $event->getRequest()->attributes->get('_route_params');
-            if ($data['status'] == 404) {
+            $route = $event->getRequest()->attributes->get('_route');
+
+            if ($route == 'delete_user') {
+                $data['message'] = "Vous n'êtes pas autorisé à supprimer l'utilisateur #" . $params['user'] . ".";
+                $data['status'] = 403;
+            } elseif ($data['status'] == 404) {
                 if (array_key_exists('ref', $params)) {
                     $data['message'] = "La référence " . $params['ref'] . " n'existe pas.";
                 } elseif (array_key_exists('client', $params)) {
@@ -29,14 +34,14 @@ class ExceptionSubscriber implements EventSubscriberInterface
                 $data['message'] = $exception->getMessage();
             }
 
-            $event->setResponse(new JsonResponse($data));
+            $event->setResponse(new JsonResponse($data, $data['status']));
         } else {
             $data = [
                 'status' => 500,
                 'message' => $exception->getMessage(),
             ];
 
-            $event->setResponse(new JsonResponse($data));
+            $event->setResponse(new JsonResponse($data, 500));
         }
     }
 

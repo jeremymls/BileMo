@@ -16,6 +16,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use  Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class UserController extends AbstractController
 {
@@ -23,8 +25,13 @@ class UserController extends AbstractController
      * @Route("/api/users/{client}", name="users")
      * @IsGranted("ROLE_CLIENT")
      */
-    public function getUserList(User $client, SerializerInterface $serializer, UserRepository $userRepository, Request $request): JsonResponse
-    {
+    public function getUserList(
+        User $client,
+        SerializerInterface $serializer,
+        UserRepository $userRepository,
+        Request $request,
+        TagAwareCacheInterface $cachePool
+    ): JsonResponse {
         if ($this->getUser() !== $client) {
             throw new HttpException(403, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
@@ -32,8 +39,12 @@ class UserController extends AbstractController
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 3);
 
-        $usersList = $userRepository->findAllWithPagination($page, $limit, $client);
-        $jsonUsersList = $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
+        $idCache = 'user_list_' . $page . '_' . $limit;
+        $jsonUsersList = $cachePool->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $client, $serializer) {
+            $item->tag('user_list');
+            $usersList = $userRepository->findAllWithPagination($page, $limit, $client);
+            return $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
+        });
 
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
     }
@@ -64,7 +75,8 @@ class UserController extends AbstractController
         EntityManagerInterface $em,
         UrlGeneratorInterface $urlGenerator,
         ValidatorInterface $validator,
-        UserPasswordHasherInterface $passwordEncoder
+        UserPasswordHasherInterface $passwordEncoder,
+        TagAwareCacheInterface $cachePool
     ): JsonResponse {
         if ($this->getUser() !== $client) {
             throw new HttpException(403, "Vous n'êtes pas autorisé à ajouté un utilisateur à ce client.");
@@ -93,6 +105,8 @@ class UserController extends AbstractController
         $em->persist($user);
         $em->flush();
 
+        $cachePool->invalidateTags(['user_list']);
+
         $jsonUser = $serializer->serialize($user, 'json', ['groups' => ['getUsers', 'createUser']]);
 
         $location = $urlGenerator->generate('user', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -101,10 +115,14 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/user/{id}", name="delete_user", methods={"DELETE"}, priority=10)
+     * @Route("/api/user/{client}/{user}", name="delete_user", methods={"DELETE"}, priority=10)
      */
-    public function deleteUser(User $user, EntityManagerInterface $em): JsonResponse
+    public function deleteUser(User $client, User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
     {
+        if ($this->getUser() !== $client || !$client->getUsers()->contains($user)) {
+            throw new HttpException(403);
+        }
+        $cachePool->invalidateTags(['user_list']);
         $em->remove($user);
         $em->flush();
 
