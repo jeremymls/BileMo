@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,13 +23,16 @@ class UserController extends AbstractController
      * @Route("/api/users/{client}", name="users")
      * @IsGranted("ROLE_CLIENT")
      */
-    public function getUserList(User $client, SerializerInterface $serializer): JsonResponse
+    public function getUserList(User $client, SerializerInterface $serializer, UserRepository $userRepository, Request $request): JsonResponse
     {
         if ($this->getUser() !== $client) {
             throw new HttpException(403, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
 
-        $usersList = $client->getUsers();
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
+
+        $usersList = $userRepository->findAllWithPagination($page, $limit, $client);
         $jsonUsersList = $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
 
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
