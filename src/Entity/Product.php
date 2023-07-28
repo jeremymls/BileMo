@@ -7,8 +7,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "product",
+ *          parameters = { "ref" = "expr(object.getRef())" },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"getProducts"})
+ * )
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
 class Product

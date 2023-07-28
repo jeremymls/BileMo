@@ -10,8 +10,35 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "user",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"getUsers"})
+ * )
+ *
+ * @Hateoas\Relation(
+ *      "create",
+ *      href = @Hateoas\Route(
+ *          "create_user",
+ *          parameters = { "client" = "expr(object.getClient().getId())" },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"getUsers"})
+ * )
+ *
+ * @Hateoas\Relation(
+ *      "delete",
+ *      href = @Hateoas\Route(
+ *          "delete_user",
+ *          parameters = { "client" = "expr(object.getClient().getId())", "user" = "expr(object.getId())" },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups = {"getUsers"})
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
