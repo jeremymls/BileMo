@@ -19,11 +19,39 @@ use  Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class UserController extends AbstractController
 {
     /**
-     * @Route("/api/users/{client}", name="users")
+     * Cette méthode permet de récupérer la liste des utilisateurs d'un client
+     * 
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne la liste des utilisateurs",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *      )
+     * )
+     * @OA\Parameter(
+     *      name="page",
+     *      in="query",
+     *      description="La page que l'on veut afficher",
+     *      @OA\Schema(type="int")
+     * )
+     * 
+     * @OA\Parameter(
+     *      name="limit",
+     *      in="query",
+     *      description="Le nombre d'éléments que l'on veut récupérer",
+     *      @OA\Schema(type="int")
+     * )
+     * @OA\Tag(name="User")
+     * 
+     * @Route("/api/users/{client}", name="users", methods={"GET"})
      * @IsGranted("ROLE_CLIENT")
      */
     public function getUserList(
@@ -52,7 +80,32 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/user/{id}", name="user")
+     * Cette méthode permet de récupérer la liste des utilisateurs d'un client
+     * 
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne la liste des utilisateurs",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *      )
+     * )
+     * @OA\Parameter(
+     *      name="page",
+     *      in="query",
+     *      description="La page que l'on veut afficher",
+     *      @OA\Schema(type="int")
+     * )
+     * 
+     * @OA\Parameter(
+     *      name="limit",
+     *      in="query",
+     *      description="Le nombre d'éléments que l'on veut récupérer",
+     *      @OA\Schema(type="int")
+     * )
+     * @OA\Tag(name="User")
+     * 
+     * @Route("/api/user/{id}", name="user", methods={"GET"})
      * @IsGranted("ROLE_CLIENT")
      */
     public function getDetailUser(User $user, SerializerInterface $serializer): JsonResponse
@@ -68,6 +121,27 @@ class UserController extends AbstractController
     }
 
     /**
+     * Cette méthode permet de créer un utilisateur
+     * 
+     * @OA\Response(
+     *      response=201,
+     *      description="Création d'un utilisateur",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers", "createUser"}))
+     *      )
+     * )
+     * @OA\Parameter(
+     *      name="user",
+     *      in="header",
+     *      description="L'utilisateur à créer",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers", "createUser"}))
+     *      )
+     * )
+     * @OA\Tag(name="User")
+     * 
      * @Route("/api/user/{client}", name="create_user", methods={"POST"}, priority=10)
      * @IsGranted("ROLE_CLIENT")
      */
@@ -119,6 +193,14 @@ class UserController extends AbstractController
     }
 
     /**
+     * Cette méthode permet de supprimer un utilisateur
+     * 
+     * @OA\Response(
+     *      response=204,
+     *      description="Suppression d'un utilisateur"
+     * )
+     * @OA\Tag(name="User")
+     * 
      * @Route("/api/user/{client}/{user}", name="delete_user", methods={"DELETE"}, priority=10)
      */
     public function deleteUser(User $client, User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse

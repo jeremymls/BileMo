@@ -51,3 +51,4 @@ nelmio_api_doc:
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+        disable_default_routes: true # Disables the documentation route
