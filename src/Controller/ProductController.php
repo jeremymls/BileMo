@@ -14,11 +14,39 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/api/products", name="products")
+     * Cette méthode permet de récupérer la liste des produits
+     * 
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne la liste des produits",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=Product::class, groups={"getProducts"}))
+     *      )
+     * )
+     * @OA\Parameter(
+     *      name="page",
+     *      in="query",
+     *      description="La page que l'on veut afficher",
+     *      @OA\Schema(type="int")
+     * )
+     * 
+     * @OA\Parameter(
+     *      name="limit",
+     *      in="query",
+     *      description="Le nombre d'éléments que l'on veut récupérer",
+     *      @OA\Schema(type="int")
+     * )
+     * @OA\Tag(name="Product")
+     * 
+     * @Route("/api/products", name="products", methods={"GET"})
      */
     public function getProductList(
         ProductRepository $productRepository,
@@ -41,7 +69,19 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/api/product/{ref}", name="product")
+     * Cette méthode permet de récupérer le détail d'un produit
+     * 
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne le détail d'un produit",
+     *      @OA\JsonContent(
+     *          type="array",
+     *          @OA\Items(ref=@Model(type=Product::class, groups={"getProduct"}))
+     *      )
+     * )
+     * @OA\Tag(name="Product")
+     * 
+     * @Route("/api/product/{ref}", name="product", methods={"GET"})
      */
     public function getDetailProduct(Product $product, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
     {
