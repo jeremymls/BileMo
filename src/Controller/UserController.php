@@ -52,22 +52,22 @@ class UserController extends AbstractController
      * )
      * @OA\Tag(name="User")
      * 
-     * @Route("/api/users/{client}", name="users", methods={"GET"})
+     * @Route("/api/users", name="users", methods={"GET"})
      * @IsGranted("ROLE_CLIENT")
      */
     public function getUserList(
-        User $client,
         SerializerInterface $serializer,
         UserRepository $userRepository,
         Request $request,
         TagAwareCacheInterface $cachePool
     ): JsonResponse {
-        if ($this->getUser() !== $client) {
-            throw new HttpException(403, "Vous n'êtes pas autorisé à accéder à cette ressource.");
+        if ($this->isGranted(["ROLE_CLIENT"])) {
+            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
 
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 3);
+        $client = $this->getUser();
 
         $idCache = 'user_list_' . $page . '_' . $limit;
         $jsonUsersList = $cachePool->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $client, $serializer) {
@@ -99,7 +99,7 @@ class UserController extends AbstractController
     public function getDetailUser(User $user, SerializerInterface $serializer): JsonResponse
     {
         if ($this->getUser() !== $user->getClient()) {
-            throw new HttpException(403, "Vous n'êtes pas autorisé à accéder à cette ressource.");
+            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
 
         $context = SerializationContext::create()->setGroups(['getUsers', 'getUser']);
@@ -130,11 +130,10 @@ class UserController extends AbstractController
      * )
      * @OA\Tag(name="User")
      * 
-     * @Route("/api/user/{client}", name="create_user", methods={"POST"}, priority=10)
+     * @Route("/api/user", name="create_user", methods={"POST"}, priority=10)
      * @IsGranted("ROLE_CLIENT")
      */
     public function createUser(
-        User $client,
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
@@ -143,8 +142,8 @@ class UserController extends AbstractController
         UserPasswordHasherInterface $passwordEncoder,
         TagAwareCacheInterface $cachePool
     ): JsonResponse {
-        if ($this->getUser() !== $client) {
-            throw new HttpException(403, "Vous n'êtes pas autorisé à ajouter un utilisateur à ce client.");
+        if ($this->isGranted(["ROLE_CLIENT"])) {
+            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à ajouter un utilisateur.");
         }
 
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
@@ -164,9 +163,8 @@ class UserController extends AbstractController
 
         if ($user->getPassword()) {
             $user->setPassword($passwordEncoder->hashPassword($user, $user->getPassword()));
-        } 
-        $user->setRoles(['ROLE_USER']);
-        $user->setClient($client);
+        }
+        $user->setClient($this->getUser());
         $em->persist($user);
         $em->flush();
 
@@ -189,14 +187,16 @@ class UserController extends AbstractController
      * )
      * @OA\Tag(name="User")
      * 
-     * @Route("/api/user/{client}/{user}", name="delete_user", methods={"DELETE"}, priority=10)
+     * @Route("/api/user/{user}", name="delete_user", methods={"DELETE"}, priority=10)
      */
-    public function deleteUser(User $client, User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
+    public function deleteUser(User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
     {
-        if ($this->getUser() !== $client || !$client->getUsers()->contains($user)) {
-            throw new HttpException(403);
+        if ( $this->getUser() !== $user->getClient() ) {
+            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à supprimer cette ressource.");
         }
+
         $cachePool->invalidateTags(['user_list']);
+
         $em->remove($user);
         $em->flush();
 
@@ -224,7 +224,7 @@ class UserController extends AbstractController
         TagAwareCacheInterface $cache
     ): JsonResponse {
         if ($this->getUser() !== $user->getClient()) {
-            throw new HttpException(403, "Vous n'êtes pas autorisé à accéder à cette ressource.");
+            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
 
         $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
