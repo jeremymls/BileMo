@@ -22,6 +22,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 class UserController extends AbstractController
 {
@@ -89,19 +90,6 @@ class UserController extends AbstractController
      *          type="array",
      *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
      *      )
-     * )
-     * @OA\Parameter(
-     *      name="page",
-     *      in="query",
-     *      description="La page que l'on veut afficher",
-     *      @OA\Schema(type="int")
-     * )
-     * 
-     * @OA\Parameter(
-     *      name="limit",
-     *      in="query",
-     *      description="Le nombre d'éléments que l'on veut récupérer",
-     *      @OA\Schema(type="int")
      * )
      * @OA\Tag(name="User")
      * 
@@ -213,5 +201,50 @@ class UserController extends AbstractController
         $em->flush();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Cette méthode permet de modifier un utilisateur
+     * 
+     * @OA\Response(
+     *      response=204,
+     *      description="Modification d'un utilisateur"
+     * )
+     * @OA\Tag(name="User")
+     * 
+     * @Route("/api/user/{id}", name="update_user", methods={"PUT"}, priority=10)
+     */
+    public function updateUser(
+        Request $request,
+        User $user,
+        SerializerInterface $serializer,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordEncoder,
+        ValidatorInterface $validator,
+        TagAwareCacheInterface $cache
+    ): JsonResponse {
+        if ($this->getUser() !== $user->getClient()) {
+            throw new HttpException(403, "Vous n'êtes pas autorisé à accéder à cette ressource.");
+        }
+
+        $newUser = $serializer->deserialize($request->getContent(), User::class, 'json');
+
+        if ($newUser->getEmail() === null || $newUser->getPassword() === null) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST, "Données manquantes");
+        }
+
+        $user->setEmail($newUser->getEmail());
+        $user->setPassword($passwordEncoder->hashPassword($user, $newUser->getPassword()));
+
+        $errors = $validator->validate($user);
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
+
+        $em->flush();
+
+        $cache->invalidateTags(['user_list']);
+
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
