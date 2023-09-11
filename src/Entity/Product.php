@@ -31,13 +31,13 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getProducts", "getUser", "getUsers"})
+     * @Groups({"getProducts", "getUser", "getUsers", "getProduct"})
      */
     private $ref;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getProducts", "getUser", "getUsers"})
+     * @Groups({"getProducts", "getUser", "getUsers", "getProduct"})
      */
     private $name;
 

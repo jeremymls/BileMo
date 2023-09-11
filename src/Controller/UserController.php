@@ -188,6 +188,7 @@ class UserController extends AbstractController
      * @OA\Tag(name="User")
      * 
      * @Route("/api/user/{user}", name="delete_user", methods={"DELETE"}, priority=10)
+     * @IsGranted("ROLE_CLIENT")
      */
     public function deleteUser(User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
     {
@@ -213,6 +214,7 @@ class UserController extends AbstractController
      * @OA\Tag(name="User")
      * 
      * @Route("/api/user/{id}", name="update_user", methods={"PUT"}, priority=10)
+     * @IsGranted("ROLE_CLIENT")
      */
     public function updateUser(
         Request $request,
