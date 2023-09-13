@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 class UserController extends AbstractController
 {
     /**
-     * Cette méthode permet de récupérer la liste des utilisateurs d'un client
+     * Permet de récupérer la liste des utilisateurs d'un client
      * 
      * @OA\Response(
      *      response=200,
@@ -66,7 +66,7 @@ class UserController extends AbstractController
         }
 
         $page = $request->get('page', 1);
-        $limit = $request->get('limit', 3);
+        $limit = $request->get('limit', 5);
         $client = $this->getUser();
 
         $idCache = 'user_list_' . $page . '_' . $limit;
@@ -81,11 +81,11 @@ class UserController extends AbstractController
     }
 
     /**
-     * Cette méthode permet de récupérer la liste des utilisateurs d'un client
+     * Permet de récupérer le détail d'un utilisateur
      * 
      * @OA\Response(
      *      response=200,
-     *      description="Retourne la liste des utilisateurs",
+     *      description="Retourne le détail d'un utilisateur",
      *      @OA\JsonContent(
      *          type="array",
      *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
@@ -98,7 +98,7 @@ class UserController extends AbstractController
      */
     public function getDetailUser(User $user, SerializerInterface $serializer): JsonResponse
     {
-        if ($this->getUser() !== $user->getClient()) {
+        if ($this->getUser() !== $user->getClient() && $user !== $this->getUser()) {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
 
@@ -109,25 +109,35 @@ class UserController extends AbstractController
     }
 
     /**
-     * Cette méthode permet de créer un utilisateur
+     * Permet de créer un utilisateur
      * 
      * @OA\Response(
      *      response=201,
      *      description="Création d'un utilisateur",
      *      @OA\JsonContent(
      *          type="array",
-     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers", "createUser"}))
+     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers", "getUser"}))
      *      )
      * )
-     * @OA\Parameter(
-     *      name="user",
-     *      in="header",
-     *      description="L'utilisateur à créer",
+     * @OA\RequestBody(
+     *      request="User",
+     *      description="Les données à envoyer pour créer un utilisateur",
+     *      required=true,
      *      @OA\JsonContent(
-     *          type="array",
-     *          @OA\Items(ref=@Model(type=User::class, groups={"getUsers", "createUser"}))
+     *          type="object",
+     *          @OA\Property(
+     *              property="email",
+     *              type="string",
+     *              example="utilisateur@bile.mo"
+     *          ),
+     *          @OA\Property(
+     *              property="password",
+     *              type="string",
+     *              example="password"
+     *          )
      *      )
-     * )
+     *  )
+     * 
      * @OA\Tag(name="User")
      * 
      * @Route("/api/user", name="create_user", methods={"POST"}, priority=10)
@@ -152,10 +162,16 @@ class UserController extends AbstractController
 
         if (count($errors) > 0) {
             $data = ["status" => 400];
-            $data["message"] = (count($errors) > 1) ? "Requête invalide" : $errors[0]->getMessage();
-            if (count($errors) > 1) {
-                foreach ($errors as $error) {
-                    $data["errors"][] = $error->getMessage();
+            $data["message"] = "Requête invalide";
+            foreach ($errors as $error) {
+                if ($error->getConstraint() !== null) {
+                    if (get_class($error->getConstraint()) === "Symfony\Component\Validator\Constraints\Length") {
+                        $data["erreurs"][$error->getPropertyPath()][] = $error->getConstraint()->minMessage;
+                    } else {
+                        $data["erreurs"][$error->getPropertyPath()][] = $error->getConstraint()->message;
+                    }
+                } else {
+                    $data["erreurs"][$error->getPropertyPath()][] = $error->getMessage();
                 }
             }
             return new JsonResponse($serializer->serialize($data, 'json'), Response::HTTP_BAD_REQUEST, [], true);
@@ -170,7 +186,7 @@ class UserController extends AbstractController
 
         $cachePool->invalidateTags(['user_list']);
 
-        $context = SerializationContext::create()->setGroups(['getUsers', 'createUser']);
+        $context = SerializationContext::create()->setGroups(['getUsers', 'getUser']);
         $jsonUser = $serializer->serialize($user, 'json', $context);
 
         $location = $urlGenerator->generate('user', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -179,38 +195,36 @@ class UserController extends AbstractController
     }
 
     /**
-     * Cette méthode permet de supprimer un utilisateur
+     * Permet de modifier un utilisateur
      * 
      * @OA\Response(
-     *      response=204,
-     *      description="Suppression d'un utilisateur"
-     * )
-     * @OA\Tag(name="User")
-     * 
-     * @Route("/api/user/{user}", name="delete_user", methods={"DELETE"}, priority=10)
-     * @IsGranted("ROLE_CLIENT")
-     */
-    public function deleteUser(User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
-    {
-        if ( $this->getUser() !== $user->getClient() ) {
-            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à supprimer cette ressource.");
-        }
-
-        $cachePool->invalidateTags(['user_list']);
-
-        $em->remove($user);
-        $em->flush();
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Cette méthode permet de modifier un utilisateur
-     * 
-     * @OA\Response(
-     *      response=204,
+     *      response=200,
      *      description="Modification d'un utilisateur"
      * )
+     * @OA\Parameter(
+     *      name="id",
+     *      in="path",
+     *      description="L'identifiant de l'utilisateur",
+     *      required=true,
+     *  )
+     * @OA\RequestBody(
+     *      request="User",
+     *      description="Les données à envoyer pour modifier un utilisateur",
+     *      required=true,
+     *      @OA\JsonContent(
+     *          type="object",
+     *          @OA\Property(
+     *              property="email",
+     *              type="string",
+     *              example="client_0@bile.mo"
+     *          ),
+     *          @OA\Property(
+     *              property="password",
+     *              type="string",
+     *              example="password"
+     *          )
+     *      )
+     *  )
      * @OA\Tag(name="User")
      * 
      * @Route("/api/user/{id}", name="update_user", methods={"PUT"}, priority=10)
@@ -223,9 +237,10 @@ class UserController extends AbstractController
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordEncoder,
         ValidatorInterface $validator,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
+        UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
-        if ($this->getUser() !== $user->getClient()) {
+        if ($this->getUser() !== $user->getClient() && $user !== $this->getUser()) {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
 
@@ -247,6 +262,41 @@ class UserController extends AbstractController
 
         $cache->invalidateTags(['user_list']);
 
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+        $context = SerializationContext::create()->setGroups(['getUsers', 'getUser']);
+        $jsonUser = $serializer->serialize($user, 'json', $context);
+
+        $location = $urlGenerator->generate('user', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse($jsonUser, Response::HTTP_OK, ['Location' => $location], true);
+    }
+
+    /**
+     * Permet de supprimer un utilisateur
+     * 
+     * @OA\Response(
+     *      response=204,
+     *      description="Suppression d'un utilisateur"
+     * )
+     * @OA\Tag(name="User")
+     * 
+     * @Route("/api/user/{user}", name="delete_user", methods={"DELETE"}, priority=10)
+     * @IsGranted("ROLE_CLIENT")
+     */
+    public function deleteUser($user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
+    {
+        $user = $em->getRepository(User::class)->find($user);
+        if (!$user) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, "L'utilisateur n'existe pas.");
+        }
+        if ( $this->getUser() !== $user->getClient() ) {
+            throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à supprimer cette ressource.");
+        }
+
+        $cachePool->invalidateTags(['user_list']);
+
+        $em->remove($user);
+        $em->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
@@ -26,7 +27,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *      "create",
  *      href = @Hateoas\Route(
  *          "create_user",
- *          parameters = { "client" = "expr(object.getClient().getId())" },
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups = {"getUsers"})
  * )
@@ -35,11 +35,12 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *      "delete",
  *      href = @Hateoas\Route(
  *          "delete_user",
- *          parameters = { "client" = "expr(object.getClient().getId())", "user" = "expr(object.getId())" },
+ *          parameters = { "user" = "expr(object.getId())" },
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups = {"getUsers"})
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="Il existe déjà un compte avec cet email")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -74,7 +75,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="users")
-     * @Groups({"createUser"})
      */
     private $client;
 

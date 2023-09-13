@@ -21,7 +21,7 @@ use OpenApi\Annotations as OA;
 class ProductController extends AbstractController
 {
     /**
-     * Cette méthode permet de récupérer la liste des produits
+     * Permet de récupérer la liste des produits
      * 
      * @OA\Response(
      *      response=200,
@@ -69,7 +69,7 @@ class ProductController extends AbstractController
     }
 
     /**
-     * Cette méthode permet de récupérer le détail d'un produit
+     * Permet de récupérer le détail d'un produit
      * 
      * @OA\Response(
      *      response=200,
