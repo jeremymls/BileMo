@@ -2,7 +2,7 @@
 
 ## Présentation
 
-Dépôt Git de [BileMo](https://bilemo.jm-projets.fr/).
+Dépôt Git de [BileMo](https://bilemo.jm-projets.fr/api/doc)).
 
 Ce projet est le septième projet de la formation Développeur d'application - PHP/Symfony d'OpenClassrooms.
 
