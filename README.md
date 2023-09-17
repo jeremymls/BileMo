@@ -48,7 +48,7 @@ cp .env .env.local
 sh deploy.sh
 ```
 
-## Configuration
+## Utilisation
 
 Une fois installé, consultez la documentation de l'API à l'adresse suivante :
 [https://bilemo.jm-projets.fr/api/doc](https://bilemo.jm-projets.fr/api/doc)
