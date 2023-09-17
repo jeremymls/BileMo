@@ -60,8 +60,7 @@ echo -e "";
 echo -e "${BLUE}##########################";
 echo -e "#   Building Front-end   #";
 echo -e "##########################${UNSET}";
-# fixtures
-# php -d memory_limit=-1 bin/console doctrine:fixtures:load --no-interaction --append
+
 case "$ENV" in
 prod)
     echo -e "${BLUE}// Building without dev-dependencies / with optimize in prod ENV ${UNSET}";
@@ -88,7 +87,10 @@ echo -e "#   Checking MySQL Schema    #";
 echo -e "##############################${UNSET}";
 php bin/console doctrine:database:create --if-not-exists --no-interaction
 php -d memory_limit=-1 bin/console doctrine:migrations:migrate --no-interaction
-php -d memory_limit=-1 bin/console snowtricks:load-fixtures --no-interaction
+# fixtures
+php -d memory_limit=-1 bin/console doctrine:fixtures:load --no-interaction --append
+
+# php -d memory_limit=-1 bin/console snowtricks:load-fixtures --no-interaction
 
 echo -e "";
 echo -e "${BLUE}##############################";
