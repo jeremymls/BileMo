@@ -96,8 +96,11 @@ class UserController extends AbstractController
      * @Route("/api/user/{id}", name="user", methods={"GET"})
      * @IsGranted("ROLE_CLIENT")
      */
-    public function getDetailUser(User $user, SerializerInterface $serializer): JsonResponse
+    public function getDetailUser(?User $user, SerializerInterface $serializer): JsonResponse
     {
+        if (!$user) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, "L'utilisateur n'existe pas.");
+        }
         if ($this->getUser() !== $user->getClient() && $user !== $this->getUser()) {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
@@ -232,7 +235,7 @@ class UserController extends AbstractController
      */
     public function updateUser(
         Request $request,
-        User $user,
+        ?User $user,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordEncoder,
@@ -240,6 +243,9 @@ class UserController extends AbstractController
         TagAwareCacheInterface $cache,
         UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
+        if (!$user) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, "L'utilisateur n'existe pas.");
+        }
         if ($this->getUser() !== $user->getClient() && $user !== $this->getUser()) {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à accéder à cette ressource.");
         }
@@ -282,9 +288,8 @@ class UserController extends AbstractController
      * @Route("/api/user/{user}", name="delete_user", methods={"DELETE"}, priority=10)
      * @IsGranted("ROLE_CLIENT")
      */
-    public function deleteUser($user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
+    public function deleteUser(?User $user, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
     {
-        $user = $em->getRepository(User::class)->find($user);
         if (!$user) {
             throw new HttpException(Response::HTTP_NOT_FOUND, "L'utilisateur n'existe pas.");
         }
