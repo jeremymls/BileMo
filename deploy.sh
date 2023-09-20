@@ -87,10 +87,7 @@ echo -e "#   Checking MySQL Schema    #";
 echo -e "##############################${UNSET}";
 php bin/console doctrine:database:create --if-not-exists --no-interaction
 php -d memory_limit=-1 bin/console doctrine:migrations:migrate --no-interaction
-# fixtures
-php -d memory_limit=-1 bin/console doctrine:fixtures:load --no-interaction --append
-
-# php -d memory_limit=-1 bin/console snowtricks:load-fixtures --no-interaction
+php bin/console lexik:jwt:generate-keypair
 
 echo -e "";
 echo -e "${BLUE}##############################";
