@@ -18,10 +18,6 @@ framework:
     php_errors:
         log: true
 
-    rules:
-        symfony.request.session_cookie_default_name:
-            enabled: true
-
 when@test:
     framework:
         test: true
