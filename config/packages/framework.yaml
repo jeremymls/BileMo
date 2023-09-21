@@ -11,11 +11,16 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
         storage_factory_id: session.storage.factory.native
+        name: bile_mo
 
     #esi: true
     #fragments: true
     php_errors:
         log: true
+
+    rules:
+        symfony.request.session_cookie_default_name:
+            enabled: true
 
 when@test:
     framework:
