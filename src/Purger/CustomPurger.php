@@ -3,10 +3,10 @@
 namespace App\Purger;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\Common\DataFixtures\Purger\ORMPurgerInterface;
+use Doctrine\Common\DataFixtures\Purger\PurgerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CustomPurger implements ORMPurgerInterface
+class CustomPurger implements PurgerInterface
 {
     /** @var EntityManagerInterface|null */
     private $entityManager;
