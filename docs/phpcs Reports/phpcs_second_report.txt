@@ -1,0 +1,26 @@
+
+FILE: C:\wamp64\www\bilemo\src\Controller\ProductController.php
+----------------------------------------------------------------------
+FOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES
+----------------------------------------------------------------------
+ 61 | WARNING | Line exceeds 120 characters; contains 139 characters
+ 86 | WARNING | Line exceeds 120 characters; contains 129 characters
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Controller\UserController.php
+----------------------------------------------------------------------
+FOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 73 | WARNING | Line exceeds 120 characters; contains 142 characters
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Purger\CustomPurgerFactory.php
+----------------------------------------------------------------------
+FOUND 0 ERRORS AND 1 WARNING AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 13 | WARNING | Line exceeds 120 characters; contains 156 characters
+----------------------------------------------------------------------
+
+

@@ -22,7 +22,7 @@ class ProductController extends AbstractController
 {
     /**
      * Permet de récupérer la liste des produits
-     * 
+     *
      * @OA\Response(
      *      response=200,
      *      description="Retourne la liste des produits",
@@ -37,7 +37,7 @@ class ProductController extends AbstractController
      *      description="La page que l'on veut afficher",
      *      @OA\Schema(type="int")
      * )
-     * 
+     *
      * @OA\Parameter(
      *      name="limit",
      *      in="query",
@@ -45,7 +45,7 @@ class ProductController extends AbstractController
      *      @OA\Schema(type="int")
      * )
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Route("/api/products", name="products", methods={"GET"})
      */
     public function getProductList(
@@ -58,19 +58,22 @@ class ProductController extends AbstractController
         $limit = $request->get('limit', 10);
 
         $idCache = 'product_list_' . $page . '_' . $limit;
-        $jsonProductsList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $page, $limit, $serializer) {
-            $item->tag('product_list');
-            $context = SerializationContext::create()->setGroups(['getProducts']);
-            $productsList = $productRepository->findAllWithPagination($page, $limit);
-            return $serializer->serialize($productsList, 'json', $context);
-        });
+        $jsonProductsList = $cachePool->get(
+            $idCache,
+            function (ItemInterface $item) use ($productRepository, $page, $limit, $serializer) {
+                $item->tag('product_list');
+                $context = SerializationContext::create()->setGroups(['getProducts']);
+                $productsList = $productRepository->findAllWithPagination($page, $limit);
+                return $serializer->serialize($productsList, 'json', $context);
+            }
+        );
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
     }
 
     /**
      * Permet de récupérer le détail d'un produit
-     * 
+     *
      * @OA\Response(
      *      response=200,
      *      description="Retourne le détail d'un produit",
@@ -80,11 +83,14 @@ class ProductController extends AbstractController
      *      )
      * )
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Route("/api/product/{ref}", name="product", methods={"GET"})
      */
-    public function getDetailProduct(Product $product, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
-    {
+    public function getDetailProduct(
+        Product $product,
+        SerializerInterface $serializer,
+        EntityManagerInterface $em
+    ): JsonResponse {
         $qb = $em->createQueryBuilder();
         $qb->select('p.ref', 'p.name', 'SUM(c.quantity) as total_commands')
             ->from('App\Entity\Cart', 'c')

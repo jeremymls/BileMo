@@ -1,0 +1,176 @@
+
+FILE: C:\wamp64\www\bilemo\src\Controller\ProductController.php
+----------------------------------------------------------------------
+FOUND 6 ERRORS AND 2 WARNINGS AFFECTING 8 LINES
+----------------------------------------------------------------------
+  1 | ERROR   | [x] End of line character is invalid; expected "\n"
+    |         |     but found "\r\n"
+ 25 | ERROR   | [x] Whitespace found at end of line
+ 40 | ERROR   | [x] Whitespace found at end of line
+ 48 | ERROR   | [x] Whitespace found at end of line
+ 61 | WARNING | [ ] Line exceeds 120 characters; contains 139
+    |         |     characters
+ 73 | ERROR   | [x] Whitespace found at end of line
+ 83 | ERROR   | [x] Whitespace found at end of line
+ 86 | WARNING | [ ] Line exceeds 120 characters; contains 129
+    |         |     characters
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 6 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Controller\UserController.php
+----------------------------------------------------------------------
+FOUND 15 ERRORS AND 1 WARNING AFFECTING 15 LINES
+----------------------------------------------------------------------
+   1 | ERROR   | [x] End of line character is invalid; expected "\n"
+     |         |     but found "\r\n"
+  31 | ERROR   | [x] Whitespace found at end of line
+  46 | ERROR   | [x] Whitespace found at end of line
+  54 | ERROR   | [x] Whitespace found at end of line
+  73 | WARNING | [ ] Line exceeds 120 characters; contains 142
+     |         |     characters
+  85 | ERROR   | [x] Whitespace found at end of line
+  95 | ERROR   | [x] Whitespace found at end of line
+ 116 | ERROR   | [x] Whitespace found at end of line
+ 143 | ERROR   | [x] Whitespace found at end of line
+ 145 | ERROR   | [x] Whitespace found at end of line
+ 202 | ERROR   | [x] Whitespace found at end of line
+ 232 | ERROR   | [x] Whitespace found at end of line
+ 281 | ERROR   | [x] Whitespace found at end of line
+ 287 | ERROR   | [x] Whitespace found at end of line
+ 296 | ERROR   | [x] Expected 0 spaces after opening bracket; 1 found
+ 296 | ERROR   | [x] Expected 0 spaces before closing bracket; 1
+     |         |     found
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 15 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\DataFixtures\AppFixtures.php
+----------------------------------------------------------------------
+FOUND 5 ERRORS AFFECTING 3 LINES
+----------------------------------------------------------------------
+  1 | ERROR | [x] End of line character is invalid; expected "\n" but
+    |       |     found "\r\n"
+ 28 | ERROR | [x] Expected at least 1 space before "."; 0 found
+ 28 | ERROR | [x] Expected at least 1 space after "."; 0 found
+ 29 | ERROR | [x] Expected at least 1 space before "."; 0 found
+ 29 | ERROR | [x] Expected at least 1 space after "."; 0 found
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 5 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Entity\Cart.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Entity\Order.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Entity\Product.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Entity\User.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\EventSubscriber\ExceptionSubscriber.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Purger\CustomPurger.php
+----------------------------------------------------------------------
+FOUND 5 ERRORS AFFECTING 4 LINES
+----------------------------------------------------------------------
+  1 | ERROR | [x] Header blocks must be separated by a single blank
+    |       |     line
+  1 | ERROR | [x] End of line character is invalid; expected "\n" but
+    |       |     found "\r\n"
+ 19 | ERROR | [x] Blank line found at end of control structure
+ 29 | ERROR | [x] Whitespace found at end of line
+ 30 | ERROR | [x] Function closing brace must go on the next line
+    |       |     following the body; found 1 blank lines before
+    |       |     brace
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 5 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Purger\CustomPurgerFactory.php
+----------------------------------------------------------------------
+FOUND 3 ERRORS AND 1 WARNING AFFECTING 3 LINES
+----------------------------------------------------------------------
+  1 | ERROR   | [x] Header blocks must be separated by a single blank
+    |         |     line
+  1 | ERROR   | [x] End of line character is invalid; expected "\n"
+    |         |     but found "\r\n"
+  2 | ERROR   | [x] Header blocks must be separated by a single blank
+    |         |     line
+ 11 | WARNING | [ ] Line exceeds 120 characters; contains 156
+    |         |     characters
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 3 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Repository\ProductRepository.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
+FILE: C:\wamp64\www\bilemo\src\Repository\UserRepository.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 1 | ERROR | [x] End of line character is invalid; expected "\n" but
+   |       |     found "\r\n"
+----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+

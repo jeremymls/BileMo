@@ -25,8 +25,8 @@ class AppFixtures extends Fixture
         $products = [];
         for ($i = 0; $i < 100; ++$i) {
             $product = new Product();
-            $product->setRef('ref'.$i);
-            $product->setName('product_'.$i);
+            $product->setRef('ref' . $i);
+            $product->setName('product_' . $i);
             $manager->persist($product);
             $products[] = $product;
         }

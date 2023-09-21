@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Purger;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -9,14 +10,11 @@ class CustomPurger implements ORMPurgerInterface
 {
     /** @var EntityManagerInterface|null */
     private $entityManager;
-
     public function purge(): void
     {
         $connection = $this->entityManager->getConnection();
-
         try {
             $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
-
         } finally {
             $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
         }
@@ -26,7 +24,6 @@ class CustomPurger implements ORMPurgerInterface
         $connection->executeStatement('DELETE FROM product');
         $connection->executeStatement('DELETE FROM user WHERE client_id IS NOT NULL');
         $connection->executeStatement('DELETE FROM user');
-        
     }
 
     public function setEntityManager(EntityManagerInterface $entityManager): void

@@ -28,7 +28,7 @@ class UserController extends AbstractController
 {
     /**
      * Permet de récupérer la liste des utilisateurs d'un client
-     * 
+     *
      * @OA\Response(
      *      response=200,
      *      description="Retourne la liste des utilisateurs",
@@ -43,7 +43,7 @@ class UserController extends AbstractController
      *      description="La page que l'on veut afficher",
      *      @OA\Schema(type="int")
      * )
-     * 
+     *
      * @OA\Parameter(
      *      name="limit",
      *      in="query",
@@ -51,7 +51,7 @@ class UserController extends AbstractController
      *      @OA\Schema(type="int")
      * )
      * @OA\Tag(name="User")
-     * 
+     *
      * @Route("/api/users", name="users", methods={"GET"})
      * @IsGranted("ROLE_CLIENT")
      */
@@ -70,19 +70,22 @@ class UserController extends AbstractController
         $client = $this->getUser();
 
         $idCache = 'user_list_' . $page . '_' . $limit;
-        $jsonUsersList = $cachePool->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $client, $serializer) {
-            $item->tag('user_list');
-            $context = SerializationContext::create()->setGroups(['getUsers']);
-            $usersList = $userRepository->findAllWithPagination($page, $limit, $client);
-            return $serializer->serialize($usersList, 'json', $context);
-        });
+        $jsonUsersList = $cachePool->get(
+            $idCache,
+            function (ItemInterface $item) use ($userRepository, $page, $limit, $client, $serializer) {
+                $item->tag('user_list');
+                $context = SerializationContext::create()->setGroups(['getUsers']);
+                $usersList = $userRepository->findAllWithPagination($page, $limit, $client);
+                return $serializer->serialize($usersList, 'json', $context);
+            }
+        );
 
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
     }
 
     /**
      * Permet de récupérer le détail d'un utilisateur
-     * 
+     *
      * @OA\Response(
      *      response=200,
      *      description="Retourne le détail d'un utilisateur",
@@ -92,7 +95,7 @@ class UserController extends AbstractController
      *      )
      * )
      * @OA\Tag(name="User")
-     * 
+     *
      * @Route("/api/user/{id}", name="user", methods={"GET"})
      * @IsGranted("ROLE_CLIENT")
      */
@@ -113,7 +116,7 @@ class UserController extends AbstractController
 
     /**
      * Permet de créer un utilisateur
-     * 
+     *
      * @OA\Response(
      *      response=201,
      *      description="Création d'un utilisateur",
@@ -140,9 +143,9 @@ class UserController extends AbstractController
      *          )
      *      )
      *  )
-     * 
+     *
      * @OA\Tag(name="User")
-     * 
+     *
      * @Route("/api/user", name="create_user", methods={"POST"}, priority=10)
      * @IsGranted("ROLE_CLIENT")
      */
@@ -199,7 +202,7 @@ class UserController extends AbstractController
 
     /**
      * Permet de modifier un utilisateur
-     * 
+     *
      * @OA\Response(
      *      response=200,
      *      description="Modification d'un utilisateur"
@@ -229,7 +232,7 @@ class UserController extends AbstractController
      *      )
      *  )
      * @OA\Tag(name="User")
-     * 
+     *
      * @Route("/api/user/{id}", name="update_user", methods={"PUT"}, priority=10)
      * @IsGranted("ROLE_CLIENT")
      */
@@ -278,13 +281,13 @@ class UserController extends AbstractController
 
     /**
      * Permet de supprimer un utilisateur
-     * 
+     *
      * @OA\Response(
      *      response=204,
      *      description="Suppression d'un utilisateur"
      * )
      * @OA\Tag(name="User")
-     * 
+     *
      * @Route("/api/user/{user}", name="delete_user", methods={"DELETE"}, priority=10)
      * @IsGranted("ROLE_CLIENT")
      */
@@ -293,7 +296,7 @@ class UserController extends AbstractController
         if (!$user) {
             throw new HttpException(Response::HTTP_NOT_FOUND, "L'utilisateur n'existe pas.");
         }
-        if ( $this->getUser() !== $user->getClient() ) {
+        if ($this->getUser() !== $user->getClient()) {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Vous n'êtes pas autorisé à supprimer cette ressource.");
         }
 

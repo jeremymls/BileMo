@@ -1,0 +1,24 @@
+
+PHP CODE SNIFFER REPORT SUMMARY
+----------------------------------------------------------------------
+FILE                                                  ERRORS  WARNINGS
+----------------------------------------------------------------------
+...4\www\bilemo\src\Controller\ProductController.php  6       2
+...mp64\www\bilemo\src\Controller\UserController.php  15      1
+...amp64\www\bilemo\src\DataFixtures\AppFixtures.php  5       0
+C:\wamp64\www\bilemo\src\Entity\Cart.php              1       0
+C:\wamp64\www\bilemo\src\Entity\Order.php             1       0
+C:\wamp64\www\bilemo\src\Entity\Product.php           1       0
+C:\wamp64\www\bilemo\src\Entity\User.php              1       0
+...ilemo\src\EventSubscriber\ExceptionSubscriber.php  1       0
+C:\wamp64\www\bilemo\src\Purger\CustomPurger.php      5       0
+...p64\www\bilemo\src\Purger\CustomPurgerFactory.php  3       1
+...4\www\bilemo\src\Repository\ProductRepository.php  1       0
+...mp64\www\bilemo\src\Repository\UserRepository.php  1       0
+----------------------------------------------------------------------
+A TOTAL OF 41 ERRORS AND 4 WARNINGS WERE FOUND IN 12 FILES
+----------------------------------------------------------------------
+PHPCBF CAN FIX 41 OF THESE SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+
